@@ -8,7 +8,7 @@ export const typeUser = `#graphql
   type User {
     id: String!
     email: String!
-    name:String
+    name:String!
     phone:String
     address:Address
     answer:String
@@ -28,7 +28,7 @@ export const typeUser = `#graphql
   }
  
   type Mutation {
-    register(email: String!, password: String!, name:String, phone: String, answer: String, role: String, address: AddressInput ): User!
+    register(email: String!, password: String!, name:String!, phone: String, answer: String, role: String, address: AddressInput ): User!
     login(email: String!, password: String!): User!
   }
 `;
