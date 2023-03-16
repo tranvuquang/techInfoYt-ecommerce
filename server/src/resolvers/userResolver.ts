@@ -13,18 +13,13 @@ export const userResolver = {
         if (!checkAuth(accessToken)) {
           throw new GraphQLError(`Token is invalid`);
         }
-        const user = await users.findByPk(id);
-        if (!user) {
+        const userFounder = await users.findByPk(id);
+        if (!userFounder) {
           throw new GraphQLError(`User not found!`);
         }
+        const { dataValues } = userFounder;
         return {
-          id: user.dataValues.id,
-          email: user.email,
-          address: {
-            address: user.dataValues.address.address,
-          },
-          createdAt: user.createdAt,
-          updatedAt: user.updatedAt,
+          ...dataValues,
           accessToken: "",
         };
       } catch (error) {
@@ -44,14 +39,8 @@ export const userResolver = {
         }
         return userData.map((user: any) => {
           return {
-            id: user.id,
-            email: user.email,
+            ...user.dataValues,
             accessToken: "",
-            address: {
-              address: user.dataValues.address.address,
-            },
-            createdAt: user.createdAt,
-            updatedAt: user.updatedAt,
           };
         });
       } catch (error) {
@@ -67,19 +56,9 @@ export const userResolver = {
         if (!userFounder) {
           throw new GraphQLError(`User not found!`);
         }
-        const {
-          dataValues: {
-            id,
-            name,
-            phone,
-            role,
-            answer,
-            address,
-            createdAt,
-            updatedAt,
-          },
-        } = userFounder;
-        if (password !== userFounder.dataValues?.password) {
+        const { dataValues } = userFounder;
+        const { id } = dataValues;
+        if (password !== dataValues?.password) {
           throw new GraphQLError(`Wrong username or password!`);
         }
         const userData = {
@@ -88,15 +67,7 @@ export const userResolver = {
         };
         const accessToken = jwt.sign(userData, process.env.JWT as string);
         return {
-          id,
-          email,
-          name,
-          phone,
-          answer,
-          role,
-          address,
-          createdAt,
-          updatedAt,
+          ...dataValues,
           accessToken,
         };
       } catch (error) {
@@ -107,15 +78,7 @@ export const userResolver = {
 
     async register(
       _parent: any,
-      {
-        email,
-        password,
-        name ,
-        phone ,
-        role,
-        address,
-        answer,
-      }: any,
+      { email, password, name, phone, role, address, answer }: any,
       _context: any
     ) {
       try {
@@ -133,22 +96,14 @@ export const userResolver = {
           address,
         });
         const { dataValues } = user;
-        const { id, createdAt, updatedAt } = dataValues;
+        const { id } = dataValues;
         const userInfo = {
           id,
           email,
         };
         const accessToken = jwt.sign(userInfo, process.env.JWT as string);
         return {
-          id,
-          email,
-          name: dataValues.name,
-          phone: dataValues.phone,
-          role: dataValues.role,
-          answer: dataValues.answer,
-          address: dataValues.address,
-          createdAt,
-          updatedAt,
+          ...dataValues,
           accessToken,
         };
       } catch (error) {
