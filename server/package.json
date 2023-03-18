@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@apollo/server": "^4.4.1",
+    "@sequelize/core": "^7.0.0-alpha.23",
     "@types/graphql-iso-date": "^3.4.0",
     "@types/jsonwebtoken": "^9.0.1",
     "body-parser": "^1.20.2",
