@@ -1,21 +1,21 @@
+import "../styles/globals.css";
+import "antd/dist/reset.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "../styles/styles.scss";
-import "../styles/header.scss";
-
+import "react-toastify/dist/ReactToastify.css";
+import "../styles/AuthStyles.scss";
+import "../styles/HomePage.scss";
 import { store, wrapper } from "../app/store";
-import Head from "next/head";
-import { Header } from "../components/Header";
-import { Footer } from "../components/Footer";
 import App, { AppContext, AppProps } from "next/app";
 import { setAccessTokenRedux, setUserRedux } from "../features/auth/authSlice";
 import { graphqlClient, queryClient } from "../graphql-client/config";
 import { ApolloProvider } from "@apollo/client";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { NextComponentType, NextPageContext } from "next";
 
 import { getTokenFromCookie, getUser } from "../helpers";
 import { useAppDispatch } from "../app/hooks";
 import { getUserQuery } from "../graphql-client/queries";
+import { ToastContainer } from "react-toastify";
 
 interface MyAppProps extends AppProps {
   Component: NextComponentType<NextPageContext, any, any>;
@@ -42,25 +42,9 @@ function MyApp({ Component, pageProps }: MyAppProps) {
   const client = graphqlClient(pageProps.accessToken);
   return (
     <ApolloProvider client={client}>
+      <ToastContainer />
       <div id="root">
-        <Head>
-          <meta httpEquiv="Content-Type" content="text/html; charset=UTF-8" />
-          <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-          <meta
-            name="viewport"
-            content="width=device-width, minimum-scale=1, maximum-scale=1"
-          />
-          <meta name="keywords" content="HTML5 Template" />
-          <meta name="description" content="Cộng đồng chế ảnh ZendVN" />
-          <meta name="author" content="etheme.com" />
-          <link rel="icon" href="/favicon.ico" />
-          <title>Cộng đồng chế ảnh ZendVN</title>
-        </Head>
-        <Header />
-        <main>
-          <Component {...pageProps} />;
-        </main>
-        <Footer />
+        <Component {...pageProps} />;
       </div>
     </ApolloProvider>
   );
@@ -75,16 +59,16 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
   user = { ...user, id, email };
   store.dispatch(setAccessTokenRedux(accessToken));
   store.dispatch(setUserRedux(user));
-  console.log("01 _app.tsx");
+  console.log("01a _app.tsx");
   try {
     // neu co accessToken o cookies reload lai trang va lay them thong tin, save accessToken va user vao redux server side va pageProps
     if (!user.name && accessToken) {
       const userData = await queryClient(accessToken, dispatch, getUserQuery, {
-        id: user.id,
+        id,
       });
       if (userData) {
         const { name, phone, address, answer, role } = userData.data.getUser;
-        user = { ...user, id, email, name, phone, address, answer, role };
+        user = { ...user, name, phone, address, answer, role };
         dispatch(setUserRedux(user));
         console.log("01b _app.tsx lay them data cho user");
         return {
@@ -105,7 +89,7 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
       },
     };
   } catch (error: any) {
-    console.log(error.message);
+    console.log("1c get data error : ", error.message);
     return {
       pageProps: {
         ...appProps.pageProps,

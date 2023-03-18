@@ -32,7 +32,7 @@ const login = async (req: NextApiRequest, res: NextApiResponse) => {
     if (resData) {
       const { accessToken, email, id } = resData.data.login;
       dispatch(setAccessTokenRedux(accessToken));
-      dispatch(setUserRedux({ id, email }));
+      dispatch(setUserRedux(resData.data.login));
       setCookie(
         "accessToken",
         `${JSON.stringify(resData.data.login.accessToken)}`,
@@ -46,10 +46,7 @@ const login = async (req: NextApiRequest, res: NextApiResponse) => {
         status: 200,
         message: "success",
         accessToken,
-        user: {
-          id,
-          email,
-        },
+        user: resData.data.login,
       });
     }
     return res.status(500).json({
