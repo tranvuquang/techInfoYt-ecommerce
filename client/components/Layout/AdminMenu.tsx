@@ -7,10 +7,10 @@ const AdminMenu = () => {
         <div className="list-group dashboard-menu">
           <h4>Admin Panel</h4>
           <Link
-            href="/dashboard/admin/category/create"
+            href="/dashboard/admin/categories"
             className="list-group-item list-group-item-action"
           >
-            Create Category
+            Categories
           </Link>
           <Link
             href="/dashboard/admin/create-product"
