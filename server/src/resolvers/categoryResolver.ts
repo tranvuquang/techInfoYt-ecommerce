@@ -31,7 +31,9 @@ export const categoryResolver = {
         if (!checkAuth(accessToken)) {
           throw new GraphQLError(`Token is invalid`);
         }
-        const categoriesData = await categories.findAll({order: [["updatedAt", "DESC"]],});
+        const categoriesData = await categories.findAll({
+          order: [["updatedAt", "DESC"]],
+        });
         if (!categoriesData) {
           throw new GraphQLError(`Categories list not found!`);
         }

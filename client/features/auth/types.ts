@@ -2,6 +2,15 @@ export enum Role {
   Admin = "admin",
   User = "user",
 }
+export enum Action {
+  Create = "create",
+  Update = "update",
+}
+
+export type ICategory = {
+  id: string;
+  name: string;
+};
 
 export type IUser = {
   id: string;
@@ -18,6 +27,7 @@ export type AuthState = {
   user: IUser;
   accessToken: string;
   loading: boolean;
+  categories: ICategory[];
 };
 
 export const userDefaultData = {
@@ -29,4 +39,9 @@ export const userDefaultData = {
   answer: "ok",
   role: Role.User,
   accessToken: "",
+};
+
+export const categoryDefaultData = {
+  id: "",
+  name: "",
 };

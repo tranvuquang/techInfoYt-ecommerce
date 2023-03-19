@@ -3,8 +3,6 @@ import { wrapper } from "../../../app/store";
 import React from "react";
 import { IUser } from "../../../features/auth/types";
 import Layout from "../../../components/Layout/Layout";
-import { useAppSelector } from "../../../app/hooks";
-import { selectAuth } from "../../../features/auth/authSlice";
 import AdminMenu from "../../../components/Layout/AdminMenu";
 import { useAdmin } from "../../../helpers/useAuthen";
 
@@ -16,7 +14,7 @@ const AdminDashboard: NextPage<Props> = (props) => {
   useAdmin();
   const {
     user: { name, email, phone },
-  } = useAppSelector(selectAuth);
+  } = props
   return (
     <Layout title={"ALl Products - Best offers "}>
       <div className="container-fluid dashboard">

@@ -3,18 +3,15 @@ import { wrapper } from "../../../app/store";
 import React from "react";
 import { IUser } from "../../../features/auth/types";
 import Layout from "../../../components/Layout/Layout";
-import { useAppSelector } from "../../../app/hooks";
-import { selectAuth } from "../../../features/auth/authSlice";
 import AdminMenu from "../../../components/Layout/AdminMenu";
+import { useAdmin } from "../../../helpers/useAuthen";
 
 type Props = {
   user: IUser;
 };
 
 const Users: NextPage<Props> = (props) => {
-  const {
-    user: { name, email, phone },
-  } = useAppSelector(selectAuth);
+  useAdmin()
   return (
     <Layout title={"Dashboard - All Users"}>
       <div className="container-fluid m-3 p-3">
@@ -35,7 +32,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
   (store) =>
     async ({ query }) => {
       console.log(
-        "02 dashboard/admin.users.tsx store state on the server: ",
+        "02 dashboard/admin/users.tsx store state on the server: ",
         store.getState().auth.user.email
       );
       return {

@@ -6,9 +6,10 @@ import {
   setUserRedux,
 } from "../../features/auth/authSlice";
 import { mutationClient } from "../../graphql-client/config";
-import { loginMutation } from "../../graphql-client/mutations";
+import { loginMutation } from "../../graphql-client/auth";
 
 const login = async (req: NextApiRequest, res: NextApiResponse) => {
+  const dispatch = store.dispatch;
   try {
     const method = req.method;
     if (method !== "POST") {
@@ -24,7 +25,6 @@ const login = async (req: NextApiRequest, res: NextApiResponse) => {
       currentTime.getFullYear() + 1,
       currentTime.getMonth()
     );
-    const dispatch = store.dispatch;
     const { resData } = (await mutationClient("", dispatch, loginMutation, {
       email,
       password,
