@@ -13,7 +13,7 @@ const AdminMenu = () => {
             Categories
           </Link>
           <Link
-            href="/dashboard/admin/create-product"
+            href="/dashboard/admin/products/create"
             className="list-group-item list-group-item-action"
           >
             Create Product

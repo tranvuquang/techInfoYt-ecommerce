@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import { wrapper } from "../../../app/store";
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { IUser } from "../../../features/auth/types";
 import Layout from "../../../components/Layout/Layout";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
@@ -8,22 +8,21 @@ import { selectAuth } from "../../../features/auth/authSlice";
 import AdminMenu from "../../../components/Layout/AdminMenu";
 import { useAdmin } from "../../../helpers/useAuthen";
 import CategoryForm from "../../../components/Form/CategoryForm";
-import { useQuery } from "@apollo/client";
-import { getCategoriesQuery } from "../../../graphql-client/category/queries";
-import { mutationClient, queryClient } from "../../../graphql-client/config";
+import { getCategoriesQuery } from "../../../graphql-client/category";
+import { mutationClient } from "../../../graphql-client/config";
 import { Button } from "react-bootstrap";
 import {
-  CategoryAction,
+  Action,
   categoryDefaultData,
   ICategory,
-} from "../../../features/category/types";
+} from "../../../features/auth/types";
 
 import { Modal } from "antd";
 import {
   createCategoryMutation,
   deleteCategoryMutation,
   updateCategoryMutation,
-} from "../../../graphql-client/category/mutations";
+} from "../../../graphql-client/category";
 
 type Props = {
   user: IUser;
@@ -35,17 +34,11 @@ const Categories: NextPage<Props> = (props) => {
   const { user, accessToken } = useAppSelector(selectAuth);
   const dispatch = useAppDispatch();
   const {} = user;
-  const [categories, setCategories] = useState<ICategory[]>([]);
+  const [categories, setCategories] = useState<ICategory[]>(props.categories);
   const [visible, setVisible] = useState(false);
   const [category, setCategory] = useState<ICategory>(categoryDefaultData);
   const { id, name } = category;
-  const [action, setAction] = useState(CategoryAction.Create);
-
-  useEffect(() => {
-    if (props.categories.length > 0) {
-      setCategories(props.categories);
-    }
-  }, [props.categories]);
+  const [action, setAction] = useState(Action.Create);
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -89,13 +82,13 @@ const Categories: NextPage<Props> = (props) => {
 
   const onOpenAddNewCategoryForm = () => {
     setCategory(categoryDefaultData);
-    setAction(CategoryAction.Create);
+    setAction(Action.Create);
     setVisible(true);
   };
 
   const onOpenUpdateCategoryForm = ({ id, name }: ICategory) => {
     setCategory({ id, name });
-    setAction(CategoryAction.Update);
+    setAction(Action.Update);
     setVisible(true);
   };
 
@@ -113,7 +106,6 @@ const Categories: NextPage<Props> = (props) => {
         )) as any;
         if (resData && reFetchData) {
           setCategories(reFetchData.data.getCategories);
-          setCategory(categoryDefaultData);
         }
       }
     } catch (error: any) {
@@ -198,33 +190,12 @@ const Categories: NextPage<Props> = (props) => {
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) =>
     async ({ query }) => {
-      let categories = [];
-      const { dispatch, getState } = store;
-      const { accessToken } = getState().auth;
       console.log(
         "02 dashboard/admin/categories.tsx store state on the server: ",
         store.getState().auth.user.email
       );
-      try {
-        const resData = await queryClient(
-          accessToken,
-          dispatch,
-          getCategoriesQuery
-        );
-        if (resData) {
-          categories = resData.data.getCategories;
-          return {
-            props: {
-              categories,
-            },
-          };
-        }
-      } catch (error: any) {
-        console.log(error.message);
-      }
       return {
         props: {
-          categories,
         },
       };
     }

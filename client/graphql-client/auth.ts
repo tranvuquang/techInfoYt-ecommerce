@@ -19,25 +19,23 @@ const loginMutation = gql`
   }
 `;
 
-const createMessageMutation = gql`
-  mutation createMessageMutation(
-    $conversationId: String!
-    $sender: String!
-    $text: String!
-  ) {
-    createMessage(
-      conversationId: $conversationId
-      sender: $sender
-      text: $text
-    ) {
+const getUserQuery = gql`
+  query getUserQuery($id: String) {
+    getUser(id: $id) {
       id
-      conversationId
-      sender
-      text
+      email
+      name
+      phone
+      answer
+      role
+      accessToken
+      address {
+        address
+      }
       createdAt
       updatedAt
     }
   }
 `;
 
-export { loginMutation, createMessageMutation };
+export { loginMutation, getUserQuery };

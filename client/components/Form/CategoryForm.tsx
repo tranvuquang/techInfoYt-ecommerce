@@ -1,25 +1,25 @@
 import React from "react";
-import { CategoryAction } from "../../features/category/types";
+import { Action } from "../../features/auth/types";
 
 type Props = {
   handleSubmit: (e: React.SyntheticEvent) => void;
   value: string;
   setValue: (name: string) => void;
-  action: CategoryAction;
+  action: Action;
 };
 
 const CategoryForm = ({
   handleSubmit,
   value,
   setValue,
-  action = CategoryAction.Create,
+  action = Action.Create,
 }: Props) => {
   return (
     <>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <p className="fs-3">
-            {action === CategoryAction.Create ? "Add New" : "Update"}
+            {action === Action.Create ? "Add New" : "Update"}
           </p>
           <input
             type="text"
