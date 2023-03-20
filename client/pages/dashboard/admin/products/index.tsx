@@ -4,21 +4,25 @@ import React, { useEffect, useState } from "react";
 import { IUser } from "../../../../features/auth/types";
 import Layout from "../../../../components/Layout/Layout";
 import AdminMenu from "../../../../components/Layout/AdminMenu";
-import { IProduct } from "../../../../features/product/types";
+import {
+  IProduct,
+  IProductFilter,
+  productFilterDefaultDataValue,
+} from "../../../../features/product/types";
 import { queryClient } from "../../../../graphql-client/config";
 import { getProductsQuery } from "../../../../graphql-client/product";
 import Link from "next/link";
 import Image from "next/image";
 import { useAdmin } from "../../../../helpers/useAuthen";
 
-
 type Props = {
   user: IUser;
   products: IProduct[];
+  filter: IProductFilter;
 };
 
 const ProductsPage: NextPage<Props> = (props) => {
-  useAdmin()
+  useAdmin();
   const [products, setProducts] = useState<IProduct[]>([]);
   useEffect(() => {
     if (props.products.length > 0) {
@@ -67,6 +71,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
   (store) =>
     async ({ query }) => {
       let products: IProduct[] = [];
+      let filter: IProductFilter = productFilterDefaultDataValue;
       const { dispatch, getState } = store;
       const { accessToken } = getState().auth;
       console.log(
@@ -80,10 +85,12 @@ export const getServerSideProps = wrapper.getServerSideProps(
           getProductsQuery
         );
         if (resData) {
-          products = resData.data.getProducts;
+          filter = resData.data.getProducts.filter;
+          products = resData.data.getProducts.products;
           return {
             props: {
               products,
+              filter,
             },
           };
         }
@@ -93,6 +100,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
       return {
         props: {
           products,
+          filter
         },
       };
     }

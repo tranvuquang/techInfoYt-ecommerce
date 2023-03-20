@@ -142,9 +142,9 @@ const ProductCreateUpdate = (props: Props) => {
                 showSearch
                 className="form-select mb-3"
                 onChange={(value) => {
-                  setProduct({ ...product, category: [`${value}`] });
+                  setProduct({ ...product, category: value });
                 }}
-                value={category[0]}
+                value={category}
               >
                 {props.categories?.map((c) => (
                   <Select.Option key={c.id} value={c.id}>

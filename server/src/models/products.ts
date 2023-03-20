@@ -20,9 +20,9 @@ module.exports = (sequelize: any, DataTypes: any) => {
       defaultValue: 0,
       allowNull: false,
     },
-    category: {
-      type: DataTypes.ARRAY(DataTypes.UUID),
-      defaultValue: [],
+    categoryId: {
+      type: DataTypes.STRING,
+      defaultValue: "",
       allowNull: false,
     },
     quantity: {

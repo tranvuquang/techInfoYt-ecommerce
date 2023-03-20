@@ -41,20 +41,30 @@ const deleteProductMutation = gql`
 `;
 
 const getProductsQuery = gql`
-  query getProductsQuery {
-    getProducts {
+  query getProductsQuery($page: Int, $limit: Int, $searchStr: String, $price: [Int], $category: [String]) {
+  getProducts(page: $page, limit: $limit, searchStr: $searchStr, price: $price, category: $category) {
+    filter {
+      category
+      limit
+      page
+      searchStr
+      total
+      price
+    }
+    products {
       id
       name
-      description
       photo
       price
       quantity
       shipping
-      category
+      description
+      categoryId
       createdAt
       updatedAt
     }
   }
+}
 `;
 
 const getProductQuery = gql`
@@ -67,7 +77,7 @@ const getProductQuery = gql`
       quantity
       shipping
       description
-      category
+      categoryId
       createdAt
       updatedAt
     }

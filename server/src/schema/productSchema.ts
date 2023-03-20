@@ -1,8 +1,17 @@
 export const typeProduct = `#graphql
   scalar Date
 
-  type Address{
+  type Address {
     address: String!
+  }
+
+  type Filter {
+    page:Int
+    limit:Int
+    total:Int
+    category:[String]
+    searchStr:String
+    price:[Int]
   }
 
   type Product {
@@ -10,12 +19,17 @@ export const typeProduct = `#graphql
     name:String!
     description:String!
     price:Int!
-    category:[String]!
+    categoryId:String!
     quantity:Int!
     photo: String!
     shipping:Boolean!
     createdAt: Date
     updatedAt: Date
+  }
+
+  type ProductData {
+    filter:Filter
+    products:[Product]!
   }
 
   input ProductInput {
@@ -31,7 +45,7 @@ export const typeProduct = `#graphql
 
   type Query {
     getProduct(id:String):Product!
-    getProducts:[Product]!
+    getProducts(page: Int,limit: Int,category: [String],searchStr:String,price:[Int]):ProductData!
   }
  
   type Mutation {
