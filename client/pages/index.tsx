@@ -72,7 +72,7 @@ const HomePage: NextPage<Props> = (props) => {
           limit,
           category: category.length === 0 ? allCategories : category,
           searchStr,
-          price: price.length === 0 ? [0, 1000000] : price,
+          price,
         });
         if (resData) {
           const { products } = resData.data.getProducts;
@@ -178,7 +178,7 @@ const HomePage: NextPage<Props> = (props) => {
                     <div className="card-name-price">
                       <button
                         className="btn btn-info ms-1"
-                        onClick={() => push(`/product/${p.id}`)}
+                        onClick={() => push(`/products/${p.id}`)}
                       >
                         More Details
                       </button>

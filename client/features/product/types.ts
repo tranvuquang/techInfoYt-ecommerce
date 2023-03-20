@@ -4,7 +4,7 @@ export type IProduct = {
   description: string;
   price: number;
   quantity: number;
-  category: string;
+  categoryId: string;
   photo: string;
   shipping: boolean;
 };
@@ -15,7 +15,7 @@ export const productDefaultDataValue = {
   description: "",
   price: 0,
   quantity: 0,
-  category: "",
+  categoryId: "",
   photo: "",
   shipping: false,
 };
@@ -35,5 +35,5 @@ export const productFilterDefaultDataValue = {
   total: 10,
   category: [],
   searchStr: "",
-  price: [],
+  price: [0,100000],
 };
