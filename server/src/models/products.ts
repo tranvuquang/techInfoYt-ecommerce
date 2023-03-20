@@ -21,7 +21,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
       allowNull: false,
     },
     categoryId: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       defaultValue: "",
       allowNull: false,
     },

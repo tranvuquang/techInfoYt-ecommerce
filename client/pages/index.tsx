@@ -16,6 +16,7 @@ import { queryClient } from "../graphql-client/config";
 import { getProductsQuery } from "../graphql-client/product";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { selectAuth } from "../features/auth/authSlice";
+import { useRouter } from "next/router";
 
 type Props = {
   user: IUser;
@@ -30,17 +31,22 @@ const HomePage: NextPage<Props> = (props) => {
       checked: false,
     };
   });
+  const allCategories = props.categories.map((category) => {
+    return category.id;
+  });
+  // const [cart, setCart] = useCart();
   const [categoriesArr, setCategoriesArr] = useState(categoriesDefault);
   const { loading } = useAppSelector(selectAuth);
   const dispatch = useAppDispatch();
+  const {push}=useRouter()
 
   const [filter, setFilter] = useState<IProductFilter>(
     productFilterDefaultDataValue
   );
-  const { page, limit, price, category } = filter;
+  const { page, limit, price, category, searchStr } = filter;
   const [products, setProducts] = useState<IProduct[]>([]);
 
-  const handleFilter = (value: boolean, id: string) => {
+  const handleFilterCheckbox = (value: boolean, id: string) => {
     let all: any[] = [...filter.category];
     let arr: any[] = categoriesArr.map((c) => c);
     if (value) {
@@ -64,11 +70,11 @@ const HomePage: NextPage<Props> = (props) => {
         const resData = await queryClient("", dispatch, getProductsQuery, {
           page,
           limit,
-          category/* :["7af87530-c58c-11ed-b4df-f59944ed2567","70dc9130-c58c-11ed-b4df-f59944ed2567","69873ab0-c5a1-11ed-98f9-6f5f50204f43"] */,
-          price,
+          category: category.length === 0 ? allCategories : category,
+          searchStr,
+          price: price.length === 0 ? [0, 1000000] : price,
         });
         if (resData) {
-          
           const { products } = resData.data.getProducts;
           setProducts(products);
           setFilter({
@@ -109,7 +115,7 @@ const HomePage: NextPage<Props> = (props) => {
                   <Checkbox
                     checked={c.checked}
                     key={c.id}
-                    onChange={(e) => handleFilter(e.target.checked, c.id)}
+                    onChange={(e) => handleFilterCheckbox(e.target.checked, c.id)}
                   >
                     {c.name}
                   </Checkbox>
@@ -122,7 +128,6 @@ const HomePage: NextPage<Props> = (props) => {
               <Radio.Group
                 value={price}
                 onChange={(e) => {
-                  console.log(e.target.value);
                   setFilter({ ...filter, price: e.target.value });
                 }}
               >
@@ -157,11 +162,6 @@ const HomePage: NextPage<Props> = (props) => {
                     width={200}
                     height={200}
                   />
-                  {/* <img
-                  src={`/api/v1/product/product-photo/${p.id}`}
-                  className="card-img-top"
-                  alt={p.name}
-                /> */}
                   <div className="card-body">
                     <div className="card-name-price">
                       <h5 className="card-title">{p.name}</h5>
@@ -178,7 +178,7 @@ const HomePage: NextPage<Props> = (props) => {
                     <div className="card-name-price">
                       <button
                         className="btn btn-info ms-1"
-                        // onClick={() => navigate(`/product/${p.slug}`)}
+                        onClick={() => push(`/product/${p.id}`)}
                       >
                         More Details
                       </button>
@@ -201,15 +201,17 @@ const HomePage: NextPage<Props> = (props) => {
               ))}
             </div>
             <div className="m-2 p-3">
-              {products && products.length < filter.total && (
-                <button
-                  className="btn loadmore"
-                  disabled={loading}
-                  onClick={handleLoadmore}
-                >
-                  {loading ? "Loading ..." : <> Loadmore</>}
-                </button>
-              )}
+              {products &&
+                products.length > 0 &&
+                products.length < filter.total && (
+                  <button
+                    className="btn loadmore"
+                    disabled={loading}
+                    onClick={handleLoadmore}
+                  >
+                    {loading ? "Loading ..." : <> Loadmore</>}
+                  </button>
+                )}
             </div>
           </div>
         </div>

@@ -69,8 +69,32 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
   store.dispatch(setUserRedux(user));
   console.log("01a _app.tsx");
   try {
+    
+
+    // chua dang nhap van lay categories data
+    if (!accessToken && categories.length === 0) {
+      const categoriesData = await queryClient(
+        accessToken,
+        dispatch,
+        getCategoriesQuery
+      );
+      categories = categoriesData?.data.getCategories;
+      dispatch(setCategoriesRedux(categories));
+      console.log(
+        "1b _app.tsx lay thong tin categories luu props va redux server side"
+      );
+      return {
+        pageProps: {
+          ...appProps.pageProps,
+          accessToken,
+          user,
+          categories,
+        },
+      };
+    }
+
     // neu co accessToken o cookies reload lai trang va lay them thong tin, save accessToken va user vao redux server side va pageProps
-    if ((!user.name || categories.length == 0) && accessToken) {
+    if ((!user.name || categories.length === 0) && accessToken) {
       const userData = await queryClient(accessToken, dispatch, getUserQuery, {
         id,
       });
@@ -85,7 +109,7 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
       categories = categoriesData?.data.getCategories;
       dispatch(setCategoriesRedux(categories));
       console.log(
-        "1b _app.tsx lay them thong tin cho user va categories luu props va redux server side"
+        "1c _app.tsx lay them thong tin cho user va categories luu props va redux server side"
       );
       return {
         pageProps: {
@@ -105,7 +129,7 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
       },
     };
   } catch (error: any) {
-    console.log("1c get data error : ", error.message);
+    console.log("1d get data error : ", error.message);
     return {
       pageProps: {
         ...appProps.pageProps,
