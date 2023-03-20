@@ -29,212 +29,53 @@ export const productResolver = {
       { page = 1, limit = 3, category = [], searchStr = "", price = [] }: any
     ) {
       try {
-        if (category.length === 0) {
-          const productsFounder = await products.findAll({
-            order: [["updatedAt", "DESC"]],
-            subQuery: false,
-            offset: (page - 1) * limit,
-            limit,
-            where:
-              price.length === 0
-                ? {}
-                : {
-                    price: {
-                      [Op.between]: price,
-                    },
-                  },
-          });
-
-          const totalFound = await products.count({
-            order: [["updatedAt", "DESC"]],
-            subQuery: false,
-            offset: (page - 1) * limit,
-            limit,
-            where:
-              price.length === 0
-                ? {}
-                : {
-                    price: {
-                      [Op.between]: price,
-                    },
-                  },
-          });
-          if (!productsFounder || !totalFound) {
-            throw new GraphQLError(`Products not found!`);
-          }
-          return {
-            filter: {
-              total: totalFound,
-              page,
-              limit,
-              category: [],
-              searchStr,
-              price,
+        const condition = {
+          order: [["updatedAt", "DESC"]],
+          subQuery: false,
+          offset: (page - 1) * limit,
+          limit,
+          where: {
+            name: {
+              [Op.iLike]: `%${searchStr}%`,
             },
-            products: productsFounder.map((product: any) => {
-              return product.dataValues;
-            }),
-          };
-        } else {
-          const productsFounder = await products.findAll({
-            order: [["updatedAt", "DESC"]],
-            subQuery: false,
-            offset: (page - 1) * limit,
-            limit,
-            where:
-              price.length === 0
-                ? {
-                    name: {
-                      [Op.iLike]: `%${searchStr}%`,
-                    },
-                    categoryId: category,
-                  }
-                : {
-                    name: {
-                      [Op.iLike]: `%${searchStr}%`,
-                    },
-                    categoryId: category,
-                    price: {
-                      [Op.between]: price,
-                    },
-                  },
-          });
-          const totalFound = await products.count({
-            order: [["updatedAt", "DESC"]],
-            subQuery: false,
-            offset: (page - 1) * limit,
-            limit,
-            where:
-              price.length === 0
-                ? {
-                    name: {
-                      [Op.iLike]: `%${searchStr}%`,
-                    },
-                    categoryId: category,
-                  }
-                : {
-                    name: {
-                      [Op.iLike]: `%${searchStr}%`,
-                    },
-                    categoryId: category,
-                    price: {
-                      [Op.between]: price,
-                    },
-                  },
-          });
-          if (!productsFounder) {
-            throw new GraphQLError(`Products not found!`);
-          }
+            categoryId: category,
+            price: {
+              [Op.between]: price,
+            },
+          },
+        };
+        const productsFounder = await products.findAll(condition);
+        const totalFound = await products.count(condition);
+        if (!productsFounder || !totalFound) {
           return {
             filter: {
-              total: totalFound,
+              total: 0,
               page,
               limit,
               category,
               searchStr,
               price,
             },
-            products: productsFounder.map((product: any) => {
-              return {
-                ...product.dataValues,
-              };
-            }),
+            products: [],
           };
         }
+        return {
+          filter: {
+            total: totalFound,
+            page,
+            limit,
+            category,
+            searchStr,
+            price,
+          },
+          products: productsFounder.map((product: any) => {
+            return product.dataValues;
+          }),
+        };
       } catch (error) {
         console.log(error.message);
         throw new GraphQLError(error.message);
       }
-      /* try {
-        if (category.length === 0) {
-          const productsFounder = await products.findAll({
-            order: [["createdAt", "DESC"]],
-            subQuery: false,
-            offset: (page - 1) * limit,
-            limit,
-            where: {
-              name: {
-                [Op.iLike]: `%${searchStr}%`,
-              },
-            },
-          });
-          const totalFound = await products.count({
-            order: [["createdAt", "DESC"]],
-            subQuery: false,
-            offset: (page - 1) * limit,
-            limit,
-            where: {
-              name: {
-                [Op.iLike]: `%${searchStr}%`,
-              },
-            },
-          });
-
-          if (!productsFounder || !totalFound) {
-            throw new GraphQLError(`Products list not found!`);
-          }
-          return {
-            filter: {
-              total: totalFound,
-              page,
-              limit,
-              category,
-              searchStr,
-              price,
-            },
-            products: productsFounder.map((product: any) => {
-              return {
-                ...product.dataValues,
-              };
-            }),
-          };
-        } else {
-          const productsFounder = await products.findAll({
-            order: [["createdAt", "DESC"]],
-            subQuery: false,
-            offset: (page - 1) * limit,
-            limit,
-            where: {
-              name: {
-                [Op.iLike]: `%${searchStr}%`,
-              },
-              // category: { [Op.contains]: [`${category}`] },
-            },
-          });
-
-          const totalFound = await products.count({
-            order: [["createdAt", "DESC"]],
-            subQuery: false,
-            offset: (page - 1) * limit,
-            limit,
-            where: {
-              name: {
-                [Op.iLike]: `%${searchStr}%`,
-              },
-              category: { [Op.contains]: [`${category}`] },
-            },
-          });
-
-          if (!productsFounder || !totalFound) {
-            throw new GraphQLError(`Products list not found!`);
-          }
-          return {
-            filter: {
-              total: totalFound,
-              page,
-              limit,
-              category,
-              searchStr,
-              price,
-            },
-            products: productsFounder.map((product: any) => {
-              return {
-                ...product.dataValues,
-              };
-            }),
-          };
-        }
-      } */
     },
   },
   Mutation: {

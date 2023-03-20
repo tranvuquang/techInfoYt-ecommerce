@@ -26,11 +26,8 @@ export const categoryResolver = {
       }
     },
 
-    async getCategories(_parent: any, _args: any, { accessToken }: any) {
+    async getCategories(_parent: any, _args: any, ) {
       try {
-        if (!checkAuth(accessToken)) {
-          throw new GraphQLError(`Token is invalid`);
-        }
         const categoriesData = await categories.findAll({
           order: [["updatedAt", "DESC"]],
         });
