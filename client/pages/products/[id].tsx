@@ -7,8 +7,8 @@ import AdminMenu from "../../components/Layout/AdminMenu";
 import { useAdmin } from "../../helpers/useAuthen";
 import {
   IProduct,
-  productDefaultDataValue,
-  productFilterDefaultDataValue,
+  productDefaultValue,
+  productFilterDefaultValue,
 } from "../../features/product/types";
 import { queryClient } from "../../graphql-client/config";
 import {
@@ -119,7 +119,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
   (store) =>
     async ({ query }) => {
       const { id } = query;
-      let product = productDefaultDataValue;
+      let product = productDefaultValue;
       let productsArr: any = [];
       const { dispatch, getState } = store;
       const { accessToken, categories } = getState().auth;
@@ -130,7 +130,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
         "02 products/[id].tsx store state on the server: ",
         store.getState().auth.user.email
       );
-      const { page, limit, searchStr, price } = productFilterDefaultDataValue;
+      const { page, limit, searchStr, price } = productFilterDefaultValue;
 
       if (id) {
         const resData = await queryClient(

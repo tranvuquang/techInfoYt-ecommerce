@@ -1,13 +1,13 @@
 import type { NextPage } from "next";
 import { wrapper } from "../../../../app/store";
 import React, { useEffect, useState } from "react";
-import { IUser } from "../../../../features/auth/types";
+import { ICategory, IUser } from "../../../../features/auth/types";
 import Layout from "../../../../components/Layout/Layout";
 import AdminMenu from "../../../../components/Layout/AdminMenu";
 import {
   IProduct,
   IProductFilter,
-  productFilterDefaultDataValue,
+  productFilterDefaultValue,
 } from "../../../../features/product/types";
 import { queryClient } from "../../../../graphql-client/config";
 import { getProductsQuery } from "../../../../graphql-client/product";
@@ -19,6 +19,7 @@ type Props = {
   user: IUser;
   products: IProduct[];
   filter: IProductFilter;
+  categories: ICategory[];
 };
 
 const ProductsPage: NextPage<Props> = (props) => {
@@ -70,10 +71,14 @@ const ProductsPage: NextPage<Props> = (props) => {
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) =>
     async ({ query }) => {
-      let products: IProduct[] = [];
-      let filter: IProductFilter = productFilterDefaultDataValue;
       const { dispatch, getState } = store;
-      const { accessToken } = getState().auth;
+      const { accessToken, categories } = getState().auth;
+      const allCategories = categories.map((cate) => {
+        return cate.id;
+      });
+      let products: IProduct[] = [];
+      let filter: IProductFilter = productFilterDefaultValue;
+
       console.log(
         "02 dashboard/admin/products/index.tsx store state on the server: ",
         store.getState().auth.user.email
@@ -82,7 +87,8 @@ export const getServerSideProps = wrapper.getServerSideProps(
         const resData = await queryClient(
           accessToken,
           dispatch,
-          getProductsQuery
+          getProductsQuery,
+          { ...filter, category: allCategories }
         );
         if (resData) {
           filter = resData.data.getProducts.filter;
@@ -100,7 +106,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
       return {
         props: {
           products,
-          filter
+          filter,
         },
       };
     }

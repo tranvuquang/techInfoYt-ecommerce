@@ -6,7 +6,7 @@ import { Action, IUser } from "../../../../features/auth/types";
 import { ICategory } from "../../../../features/auth/types";
 import {
   IProduct,
-  productDefaultDataValue,
+  productDefaultValue,
 } from "../../../../features/product/types";
 import { useAdmin } from "../../../../helpers/useAuthen";
 import { queryClient } from "../../../../graphql-client/config";
@@ -35,7 +35,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
   (store) =>
     async ({ query }) => {
       const { id } = query;
-      let product = productDefaultDataValue;
+      let product = productDefaultValue;
       const { dispatch, getState } = store;
       const { accessToken } = getState().auth;
       console.log(
