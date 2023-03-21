@@ -7,6 +7,7 @@ import {
 } from "../../features/auth/authSlice";
 import { mutationClient } from "../../graphql-client/config";
 import { loginMutation } from "../../graphql-client/auth";
+import { nextYear } from "../../features/auth/types";
 
 const login = async (req: NextApiRequest, res: NextApiResponse) => {
   const dispatch = store.dispatch;
@@ -20,11 +21,6 @@ const login = async (req: NextApiRequest, res: NextApiResponse) => {
       });
     }
     const { email, password } = req.body;
-    const currentTime = new Date();
-    const nextYear = new Date(
-      currentTime.getFullYear() + 1,
-      currentTime.getMonth()
-    );
     const { resData } = (await mutationClient("", dispatch, loginMutation, {
       email,
       password,
@@ -33,15 +29,12 @@ const login = async (req: NextApiRequest, res: NextApiResponse) => {
       const { accessToken, email, id } = resData.data.login;
       dispatch(setAccessTokenRedux(accessToken));
       dispatch(setUserRedux(resData.data.login));
-      setCookie(
-        "accessToken",
-        `${JSON.stringify(resData.data.login.accessToken)}`,
-        {
-          req,
-          res,
-          expires: nextYear,
-        }
-      );
+      setCookie("accessToken", resData.data.login.accessToken, {
+        req,
+        res,
+        expires: nextYear,
+      });
+
       return res.status(200).json({
         status: 200,
         message: "success",

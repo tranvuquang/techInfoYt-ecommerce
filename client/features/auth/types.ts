@@ -45,3 +45,9 @@ export const categoryDefaultData = {
   id: "",
   name: "",
 };
+
+const currentTime = new Date();
+export const nextYear = new Date(
+  currentTime.getFullYear() + 1,
+  currentTime.getMonth()
+);

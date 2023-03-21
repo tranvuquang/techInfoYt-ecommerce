@@ -9,7 +9,7 @@ export type IProduct = {
   shipping: boolean;
 };
 
-export const productDefaultDataValue = {
+export const productDefaultValue = {
   id: "",
   name: "",
   description: "",
@@ -29,11 +29,16 @@ export type IProductFilter = {
   price: number[];
 };
 
-export const productFilterDefaultDataValue = {
+export const productFilterDefaultValue = {
   page: 1,
   limit: 3,
   total: 10,
   category: [],
   searchStr: "",
-  price: [0,100000],
+  price: [0, 100000],
+};
+
+export type ProductState = {
+  products: IProduct[];
+  cart: IProduct[];
 };

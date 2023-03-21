@@ -10,13 +10,14 @@ import { Checkbox, Radio } from "antd";
 import {
   IProduct,
   IProductFilter,
-  productFilterDefaultDataValue,
+  productFilterDefaultValue,
 } from "../features/product/types";
 import { queryClient } from "../graphql-client/config";
 import { getProductsQuery } from "../graphql-client/product";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { selectAuth } from "../features/auth/authSlice";
 import { useRouter } from "next/router";
+import { selectProduct, setCartToCookieRedux } from "../features/product/productSlice";
 
 type Props = {
   user: IUser;
@@ -34,14 +35,14 @@ const HomePage: NextPage<Props> = (props) => {
   const allCategories = props.categories.map((category) => {
     return category.id;
   });
-  // const [cart, setCart] = useCart();
   const [categoriesArr, setCategoriesArr] = useState(categoriesDefault);
   const { loading } = useAppSelector(selectAuth);
+  const { cart } = useAppSelector(selectProduct);
   const dispatch = useAppDispatch();
-  const {push}=useRouter()
+  const { push } = useRouter();
 
   const [filter, setFilter] = useState<IProductFilter>(
-    productFilterDefaultDataValue
+    productFilterDefaultValue
   );
   const { page, limit, price, category, searchStr } = filter;
   const [products, setProducts] = useState<IProduct[]>([]);
@@ -92,8 +93,12 @@ const HomePage: NextPage<Props> = (props) => {
   const handleLoadmore = () => {
     setFilter({
       ...filter,
-      limit: limit + productFilterDefaultDataValue.limit,
+      limit: limit + productFilterDefaultValue.limit,
     });
+  };
+
+  const handleAddToCart = (p: IProduct) => {
+    dispatch(setCartToCookieRedux(p));
   };
   return (
     <Layout title={"ALl Products - Best offers "}>
@@ -115,7 +120,9 @@ const HomePage: NextPage<Props> = (props) => {
                   <Checkbox
                     checked={c.checked}
                     key={c.id}
-                    onChange={(e) => handleFilterCheckbox(e.target.checked, c.id)}
+                    onChange={(e) =>
+                      handleFilterCheckbox(e.target.checked, c.id)
+                    }
                   >
                     {c.name}
                   </Checkbox>
@@ -142,7 +149,7 @@ const HomePage: NextPage<Props> = (props) => {
               <button
                 className="btn btn-danger"
                 onClick={() => {
-                  setFilter(productFilterDefaultDataValue);
+                  setFilter(productFilterDefaultValue);
                   setCategoriesArr(categoriesDefault);
                 }}
               >
@@ -184,7 +191,7 @@ const HomePage: NextPage<Props> = (props) => {
                       </button>
                       <button
                         className="btn btn-dark ms-1"
-                        // onClick={() => {
+                        onClick={() => handleAddToCart(p)}
                         //   setCart([...cart, p]);
                         //   localStorage.setItem(
                         //     "cart",

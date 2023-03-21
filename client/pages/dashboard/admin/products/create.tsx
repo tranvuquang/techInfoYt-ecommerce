@@ -4,7 +4,7 @@ import React from "react";
 import { Action, IUser } from "../../../../features/auth/types";
 import { ICategory } from "../../../../features/auth/types";
 import {
-  productDefaultDataValue,
+  productDefaultValue,
 } from "../../../../features/product/types";
 import { useAdmin } from "../../../../helpers/useAuthen";
 import ProductCreateUpdate from "../../../../components/Form/ProductCreateUpdate";
@@ -19,7 +19,7 @@ const ProductCreate: NextPage<Props> = (props) => {
   return (
     <ProductCreateUpdate
       title={"Dashboard - Create Product"}
-      product={productDefaultDataValue}
+      product={productDefaultValue}
       action={Action.Create}
       categories={props.categories}
     />
