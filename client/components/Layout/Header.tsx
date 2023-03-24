@@ -25,7 +25,7 @@ const Header = () => {
     if (productFilter.searchStr === "") {
       setSearch("");
     }
-  }, [productFilter.searchStr]);
+  }, [productFilter.searchStr, reset]);
 
   const onSetSearch = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = evt.target;
