@@ -26,6 +26,7 @@ export type IProductFilter = {
   total: number;
   category: string[];
   searchStr: string;
+  homeSearch: string;
   price: number[];
 };
 
@@ -35,10 +36,13 @@ export const productFilterDefaultValue = {
   total: 10,
   category: [],
   searchStr: "",
+  homeSearch: "",
   price: [0, 100000],
 };
 
 export type ProductState = {
   products: IProduct[];
   cart: IProduct[];
+  productFilter: IProductFilter;
+  reset: boolean;
 };

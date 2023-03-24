@@ -7,24 +7,24 @@ import { ICategory } from "../features/auth/types";
 import Layout from "../components/Layout/Layout";
 import Image from "next/image";
 import { Checkbox, Radio } from "antd";
-import {
-  IProduct,
-  IProductFilter,
-  productFilterDefaultValue,
-} from "../features/product/types";
+import { IProduct, productFilterDefaultValue } from "../features/product/types";
 import { queryClient } from "../graphql-client";
 import { getProductsQuery } from "../graphql-client/product";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { selectAuth } from "../features/auth/authSlice";
 import { useRouter } from "next/router";
-import {  setCartToCookieRedux } from "../features/product/productSlice";
+import {
+  selectProduct,
+  setCartToCookieRedux,
+  setProductFilterRedux,
+} from "../features/product/productSlice";
 
 type Props = {
   categories: ICategory[];
 };
 
 const HomePage: NextPage<Props> = (props) => {
-  const categoriesDefault = props.categories.map((category) => {
+  let categoriesDefault = props.categories.map((category) => {
     return {
       id: category.id,
       name: category.name,
@@ -35,32 +35,30 @@ const HomePage: NextPage<Props> = (props) => {
     return category.id;
   });
   const [categoriesArr, setCategoriesArr] = useState(categoriesDefault);
+  const [products, setProducts] = useState<IProduct[]>([]);
+
   const { loading } = useAppSelector(selectAuth);
+  const { productFilter, reset } = useAppSelector(selectProduct);
+  const { page, limit, price, category, searchStr, homeSearch } = productFilter;
   const dispatch = useAppDispatch();
   const { push } = useRouter();
 
-  const [filter, setFilter] = useState<IProductFilter>(
-    productFilterDefaultValue
-  );
-  const { page, limit, price, category, searchStr } = filter;
-  const [products, setProducts] = useState<IProduct[]>([]);
-
   const handleFilterCheckbox = (value: boolean, id: string) => {
-    let all: any[] = [...filter.category];
+    let all: any[] = [...category];
     let arr: any[] = categoriesArr.map((c) => c);
-    if (value) {
+    if (value === true) {
       all.push(id);
       arr = arr.map((item) => {
         return item.id === id ? { ...item, checked: true } : item;
       });
     } else {
+      all = all.filter((c: any) => c !== id);
       arr = arr.map((item) => {
         return item.id === id ? { ...item, checked: false } : item;
       });
-      all = all.filter((c: any) => c !== id);
     }
     setCategoriesArr(arr);
-    setFilter({ ...filter, category: all });
+    dispatch(setProductFilterRedux({ ...productFilter, category: all }));
   };
 
   useEffect(() => {
@@ -70,34 +68,45 @@ const HomePage: NextPage<Props> = (props) => {
           page,
           limit,
           category: category.length === 0 ? allCategories : category,
-          searchStr,
+          searchStr: homeSearch ? homeSearch : searchStr ? searchStr : "",
           price,
         });
         if (resData) {
           const { products } = resData.data.getProducts;
           setProducts(products);
-          setFilter({
-            ...filter,
-            total: resData.data.getProducts.filter.total,
-          });
+          dispatch(
+            setProductFilterRedux({
+              ...productFilter,
+              total: resData.data.getProducts.filter.total,
+            })
+          );
         }
       } catch (error: any) {
         console.log(error.message);
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category, dispatch, limit, page, price]);
+  }, [category, dispatch, limit, page, price, homeSearch]);
 
   const handleLoadmore = () => {
-    setFilter({
-      ...filter,
-      limit: limit + productFilterDefaultValue.limit,
-    });
+    dispatch(
+      setProductFilterRedux({
+        ...productFilter,
+        limit: productFilter.limit + productFilterDefaultValue.limit,
+      })
+    );
   };
 
   const handleAddToCart = (p: IProduct) => {
     dispatch(setCartToCookieRedux(p));
   };
+
+  useEffect(() => {
+    setCategoriesArr(categoriesDefault);
+    dispatch(setProductFilterRedux(productFilterDefaultValue));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reset]);
+
   return (
     <Layout title={"ALl Products - Best offers "}>
       <div className="home-page" style={{}}>
@@ -133,7 +142,12 @@ const HomePage: NextPage<Props> = (props) => {
               <Radio.Group
                 value={price}
                 onChange={(e) => {
-                  setFilter({ ...filter, price: e.target.value });
+                  dispatch(
+                    setProductFilterRedux({
+                      ...productFilter,
+                      price: e.target.value,
+                    })
+                  );
                 }}
               >
                 {Prices?.map((p) => (
@@ -147,8 +161,8 @@ const HomePage: NextPage<Props> = (props) => {
               <button
                 className="btn btn-danger"
                 onClick={() => {
-                  setFilter(productFilterDefaultValue);
                   setCategoriesArr(categoriesDefault);
+                  dispatch(setProductFilterRedux(productFilterDefaultValue));
                 }}
               >
                 RESET FILTERS
@@ -201,7 +215,7 @@ const HomePage: NextPage<Props> = (props) => {
             <div className="m-2 p-3">
               {products &&
                 products.length > 0 &&
-                products.length < filter.total && (
+                products.length < productFilter.total && (
                   <button
                     className="btn loadmore"
                     disabled={loading}

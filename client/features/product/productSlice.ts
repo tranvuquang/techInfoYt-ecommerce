@@ -2,11 +2,13 @@ import { createSlice } from "@reduxjs/toolkit";
 import { setCookie } from "cookies-next";
 import { RootState } from "../../app/store";
 import { nextYear } from "../auth/types";
-import { IProduct, ProductState } from "./types";
+import { IProduct, productFilterDefaultValue, ProductState } from "./types";
 
 const initialState: ProductState = {
   products: [],
   cart: [],
+  productFilter: productFilterDefaultValue,
+  reset: false,
 };
 
 export const productSlice = createSlice({
@@ -51,6 +53,13 @@ export const productSlice = createSlice({
         expires: nextYear,
       });
     },
+    setProductFilterRedux: (state, action) => {
+      state.productFilter = action.payload;
+    },
+
+    setResetRedux: (state, action) => {
+      state.reset = action.payload;
+    },
   },
 });
 
@@ -59,6 +68,8 @@ export const {
   setCartToCookieRedux,
   removeCartItemRedux,
   removeCartRedux,
+  setProductFilterRedux,
+  setResetRedux,
 } = productSlice.actions;
 
 export const selectProduct = (state: RootState) => state.product;
