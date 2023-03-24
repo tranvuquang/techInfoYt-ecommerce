@@ -7,19 +7,20 @@ import "../styles/HomePage.scss";
 import { wrapper } from "../app/store";
 import App, { AppContext, AppProps } from "next/app";
 import {
+  selectAuth,
   setAccessTokenRedux,
   setCategoriesRedux,
   setUserRedux,
 } from "../features/auth/authSlice";
-import { graphqlClient } from "../graphql-client/config";
+import { graphqlClient } from "../graphql-client";
 import { ApolloProvider } from "@apollo/client";
 import { useMemo } from "react";
 import { NextComponentType, NextPageContext } from "next";
 import { getInitialPropsApp } from "../helpers";
-import { useAppDispatch } from "../app/hooks";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { ToastContainer } from "react-toastify";
 import { ICategory } from "../features/auth/types";
-import { setCartFromCookieToRedux } from "../features/product/productSlice";
+import { selectProduct, setCartFromCookieToRedux } from "../features/product/productSlice";
 import { IProduct } from "../features/product/types";
 
 interface MyAppProps extends AppProps {
@@ -37,6 +38,8 @@ interface MyAppProps extends AppProps {
 
 function MyApp({ Component, pageProps }: MyAppProps) {
   const dispatch = useAppDispatch();
+  const {} = useAppSelector(selectAuth);
+  const {} = useAppSelector(selectProduct);
   const { accessToken, user, categories, cart } = pageProps;
 
   // save accessToken va user vao redux client side
@@ -53,7 +56,7 @@ function MyApp({ Component, pageProps }: MyAppProps) {
     <ApolloProvider client={client}>
       <ToastContainer />
       <div id="root">
-        <Component {...pageProps} />;
+        <Component {...pageProps} />
       </div>
     </ApolloProvider>
   );

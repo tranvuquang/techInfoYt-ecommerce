@@ -7,7 +7,6 @@ import AdminMenu from "../../../components/Layout/AdminMenu";
 import { useAdmin } from "../../../helpers/useAuthen";
 
 type Props = {
-  user: IUser;
 };
 
 const Users: NextPage<Props> = (props) => {

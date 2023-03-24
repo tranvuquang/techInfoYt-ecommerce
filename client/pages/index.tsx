@@ -3,7 +3,7 @@ import type { NextPage } from "next";
 import { wrapper } from "../app/store";
 import React, { useEffect, useState } from "react";
 import { Prices } from "../components/Prices";
-import { ICategory, IUser } from "../features/auth/types";
+import { ICategory } from "../features/auth/types";
 import Layout from "../components/Layout/Layout";
 import Image from "next/image";
 import { Checkbox, Radio } from "antd";
@@ -12,15 +12,14 @@ import {
   IProductFilter,
   productFilterDefaultValue,
 } from "../features/product/types";
-import { queryClient } from "../graphql-client/config";
+import { queryClient } from "../graphql-client";
 import { getProductsQuery } from "../graphql-client/product";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { selectAuth } from "../features/auth/authSlice";
 import { useRouter } from "next/router";
-import { selectProduct, setCartToCookieRedux } from "../features/product/productSlice";
+import {  setCartToCookieRedux } from "../features/product/productSlice";
 
 type Props = {
-  user: IUser;
   categories: ICategory[];
 };
 
@@ -37,7 +36,6 @@ const HomePage: NextPage<Props> = (props) => {
   });
   const [categoriesArr, setCategoriesArr] = useState(categoriesDefault);
   const { loading } = useAppSelector(selectAuth);
-  const { cart } = useAppSelector(selectProduct);
   const dispatch = useAppDispatch();
   const { push } = useRouter();
 
@@ -192,13 +190,6 @@ const HomePage: NextPage<Props> = (props) => {
                       <button
                         className="btn btn-dark ms-1"
                         onClick={() => handleAddToCart(p)}
-                        //   setCart([...cart, p]);
-                        //   localStorage.setItem(
-                        //     "cart",
-                        //     JSON.stringify([...cart, p])
-                        //   );
-                        //   toast.success("Item Added to cart");
-                        // }}
                       >
                         ADD TO CART
                       </button>

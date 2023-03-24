@@ -36,11 +36,30 @@ export const productSlice = createSlice({
         });
       }
     },
+    removeCartItemRedux: (state, action) => {
+      let newCart = state.cart.filter((p) => {
+        return p.id !== action.payload;
+      });
+      state.cart = newCart;
+      setCookie("cart", `${JSON.stringify(state.cart)}`, {
+        expires: nextYear,
+      });
+    },
+    removeCartRedux: (state) => {
+      state.cart = [];
+      setCookie("cart", `${JSON.stringify(state.cart)}`, {
+        expires: nextYear,
+      });
+    },
   },
 });
 
-export const { setCartFromCookieToRedux, setCartToCookieRedux } =
-  productSlice.actions;
+export const {
+  setCartFromCookieToRedux,
+  setCartToCookieRedux,
+  removeCartItemRedux,
+  removeCartRedux,
+} = productSlice.actions;
 
 export const selectProduct = (state: RootState) => state.product;
 

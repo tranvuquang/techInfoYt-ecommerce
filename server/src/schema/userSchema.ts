@@ -2,7 +2,8 @@ export const typeUser = `#graphql
   scalar Date
 
   type Address{
-    address: String!
+    country:String
+    address: String
   }
 
   type User {
@@ -20,6 +21,7 @@ export const typeUser = `#graphql
 
   input AddressInput {
     address: String
+    country:String
   }
 
   type Query {
@@ -28,7 +30,7 @@ export const typeUser = `#graphql
   }
  
   type Mutation {
-    register(email: String!, password: String!, name:String!, phone: String, answer: String, role: String, address: AddressInput ): User!
+    register(email: String!, password: String!, name:String!, phone: String, answer: String, address: AddressInput ): User!
     login(email: String!, password: String!): User!
   }
 `;

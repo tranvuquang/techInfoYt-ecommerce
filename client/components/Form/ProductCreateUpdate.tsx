@@ -6,7 +6,7 @@ import { file2Base64 } from "../../ultis/file";
 import AdminMenu from "../Layout/AdminMenu";
 import Layout from "../Layout/Layout";
 import Image from "next/image";
-import { mutationClient } from "../../graphql-client/config";
+import { mutationClient } from "../../graphql-client";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectAuth } from "../../features/auth/authSlice";
 import {
@@ -29,7 +29,7 @@ const ProductCreateUpdate = (props: Props) => {
   const { accessToken } = useAppSelector(selectAuth);
   let inputFileEl = useRef(null);
   const [product, setProduct] = useState<IProduct>(props.product);
-  const { id, name, description, category, price, quantity, shipping, photo } =
+  const { id, name, description, categoryId, price, quantity, shipping, photo } =
     product;
   const [base64, setBase64] = useState("");
 
@@ -68,7 +68,7 @@ const ProductCreateUpdate = (props: Props) => {
               id,
               name,
               description,
-              category,
+              categoryId,
               price: Number(price),
               quantity: Number(quantity),
               shipping,
@@ -90,7 +90,7 @@ const ProductCreateUpdate = (props: Props) => {
             product: {
               name,
               description,
-              category,
+              categoryId,
               price: Number(price),
               quantity: Number(quantity),
               shipping,
@@ -142,9 +142,9 @@ const ProductCreateUpdate = (props: Props) => {
                 showSearch
                 className="form-select mb-3"
                 onChange={(value) => {
-                  setProduct({ ...product, category: value });
+                  setProduct({ ...product, categoryId: value });
                 }}
-                value={category}
+                value={categoryId}
               >
                 {props.categories?.map((c) => (
                   <Select.Option key={c.id} value={c.id}>

@@ -37,7 +37,7 @@ export const typeProduct = `#graphql
     name: String!
     description: String!
     price:Int!
-    category: [String]!
+    categoryId: String!
     quantity: Int!
     photo: String!
     shipping: Boolean! 

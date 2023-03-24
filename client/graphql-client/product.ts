@@ -12,7 +12,7 @@ const createProductMutation = gql`
       description
       createdAt
       updatedAt
-      category
+      categoryId
     }
   }
 `;
@@ -27,7 +27,7 @@ const updateProductMutation = gql`
       quantity
       shipping
       description
-      category
+      categoryId
       createdAt
       updatedAt
     }

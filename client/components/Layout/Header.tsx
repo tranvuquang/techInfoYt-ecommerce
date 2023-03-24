@@ -1,34 +1,20 @@
 import React from "react";
-import Link from "next/link";
-import { deleteCookie } from "cookies-next";
-import toast from "react-hot-toast";
-import { Badge } from "antd";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+
+import { useAppSelector } from "../../app/hooks";
 import {
   selectAuth,
-  setAccessTokenRedux,
-  setUserRedux,
 } from "../../features/auth/authSlice";
-import { Role, userDefaultData } from "../../features/auth/types";
-import axios from "axios";
 import { useRouter } from "next/router";
-import { Navbar, Container, Nav, NavDropdown } from "react-bootstrap";
+import { Navbar, Container, Nav, NavDropdown, Form, Button } from "react-bootstrap";
+import { selectProduct } from "../../features/product/productSlice";
+import { cartTransform } from "../../helpers/cart";
 
 const Header = () => {
   const { user, accessToken } = useAppSelector(selectAuth);
-  const { role, name,id } = user;
+  const { cart } = useAppSelector(selectProduct);
+  const { role, name, id } = user;
+  const { cartLength } = cartTransform(cart);
   const { push } = useRouter();
-  const dispatch = useAppDispatch();
-  const handleLogout = async () => {
-    const res = await axios.post("/api/logout");
-    if (res.data.status === 200) {
-      dispatch(setAccessTokenRedux(""));
-      dispatch(setUserRedux(userDefaultData));
-      deleteCookie("accessToken");
-      push("/login");
-    }
-    toast.success("Logout Successfully");
-  };
   return (
     <Navbar bg="light" expand="sm" fixed="top">
       <Container fluid>
@@ -40,6 +26,15 @@ const Header = () => {
         >
           🛒 Ecommerce App
         </Navbar.Brand>
+        <Form className="d-flex">
+            <Form.Control
+              type="search"
+              placeholder="Search"
+              className="me-2"
+              aria-label="Search"
+            />
+            <Button variant="outline-success">Search</Button>
+          </Form>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto">
@@ -65,12 +60,18 @@ const Header = () => {
                 >
                   Dashboard
                 </NavDropdown.Item>
-                <NavDropdown.Item href="#action/3.2" onClick={handleLogout}>
+                <NavDropdown.Item onClick={() => push("/logout")}>
                   Logout
                 </NavDropdown.Item>
               </NavDropdown>
             )}
-            <Nav.Link href="#link">Cart(0)</Nav.Link>
+            <Nav.Link
+              onClick={() => {
+                push("/cart");
+              }}
+            >
+              Cart({cartLength})
+            </Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

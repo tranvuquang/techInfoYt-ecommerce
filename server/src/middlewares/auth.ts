@@ -13,3 +13,25 @@ export const checkAuth = (accessToken: string) => {
     }
   } else return;
 };
+
+import jwt from "jsonwebtoken";
+
+export const verifyToken = async (req: any, res: any, next: any) => {
+  try {
+    const authHeader = req.header("Authorization");
+    const token = authHeader && authHeader.split(" ")[1];
+    if (!token) {
+      return res.status(403).send("Access Denied");
+    }
+
+    const decoded = jwt.verify(token, SECRET_KEY as string) as any;
+    req.headers.user=decoded
+    if (!decoded) {
+      return res.status(403).send("Token is not valid!");
+    }
+
+    next();
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

@@ -37,7 +37,8 @@ module.exports = (sequelize: any, DataTypes: any) => {
     address: {
       type: DataTypes.JSON,
       defaultValue: {
-        address: "vietnam",
+        country:"vietnam",
+        address: "",
       },
       allowNull: false,
       get(value: any) {

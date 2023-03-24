@@ -35,7 +35,7 @@ export const userDefaultData = {
   email: "",
   name: "",
   phone: "",
-  address: { address: "vietname" },
+  address: { address: "", country: "vietnam" },
   answer: "ok",
   role: Role.User,
   accessToken: "",

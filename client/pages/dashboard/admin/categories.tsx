@@ -1,7 +1,6 @@
 import type { NextPage } from "next";
 import { wrapper } from "../../../app/store";
 import React, {  useState } from "react";
-import { IUser } from "../../../features/auth/types";
 import Layout from "../../../components/Layout/Layout";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { selectAuth } from "../../../features/auth/authSlice";
@@ -9,7 +8,7 @@ import AdminMenu from "../../../components/Layout/AdminMenu";
 import { useAdmin } from "../../../helpers/useAuthen";
 import CategoryForm from "../../../components/Form/CategoryForm";
 import { getCategoriesQuery } from "../../../graphql-client/category";
-import { mutationClient } from "../../../graphql-client/config";
+import { mutationClient } from "../../../graphql-client";
 import { Button } from "react-bootstrap";
 import {
   Action,
@@ -25,15 +24,13 @@ import {
 } from "../../../graphql-client/category";
 
 type Props = {
-  user: IUser;
   categories: any[];
 };
 
 const Categories: NextPage<Props> = (props) => {
   useAdmin();
-  const { user, accessToken } = useAppSelector(selectAuth);
+  const { accessToken } = useAppSelector(selectAuth);
   const dispatch = useAppDispatch();
-  const {} = user;
   const [categories, setCategories] = useState<ICategory[]>(props.categories);
   const [visible, setVisible] = useState(false);
   const [category, setCategory] = useState<ICategory>(categoryDefaultData);

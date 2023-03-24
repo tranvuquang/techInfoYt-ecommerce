@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import { wrapper } from "../../../../app/store";
 import React from "react";
-import { Action, IUser } from "../../../../features/auth/types";
+import { Action } from "../../../../features/auth/types";
 import { ICategory } from "../../../../features/auth/types";
 import {
   productDefaultValue,
@@ -10,7 +10,6 @@ import { useAdmin } from "../../../../helpers/useAuthen";
 import ProductCreateUpdate from "../../../../components/Form/ProductCreateUpdate";
 
 type Props = {
-  user: IUser;
   categories: ICategory[];
 };
 

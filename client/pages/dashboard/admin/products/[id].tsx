@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import { wrapper } from "../../../../app/store";
 import React from "react";
-import { Action, IUser } from "../../../../features/auth/types";
+import { Action } from "../../../../features/auth/types";
 
 import { ICategory } from "../../../../features/auth/types";
 import {
@@ -9,12 +9,11 @@ import {
   productDefaultValue,
 } from "../../../../features/product/types";
 import { useAdmin } from "../../../../helpers/useAuthen";
-import { queryClient } from "../../../../graphql-client/config";
+import { queryClient } from "../../../../graphql-client";
 import { getProductQuery } from "../../../../graphql-client/product";
 import ProductCreateUpdate from "../../../../components/Form/ProductCreateUpdate";
 
 type Props = {
-  user: IUser;
   categories: ICategory[];
   product: IProduct;
 };
