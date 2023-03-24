@@ -17,6 +17,7 @@ import {
   selectProduct,
   setCartToCookieRedux,
   setProductFilterRedux,
+  setResetRedux,
 } from "../features/product/productSlice";
 
 type Props = {
@@ -163,6 +164,7 @@ const HomePage: NextPage<Props> = (props) => {
                 onClick={() => {
                   setCategoriesArr(categoriesDefault);
                   dispatch(setProductFilterRedux(productFilterDefaultValue));
+                  dispatch(setResetRedux(!reset));
                 }}
               >
                 RESET FILTERS
