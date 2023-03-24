@@ -6,8 +6,6 @@ const loginMutation = gql`
       accessToken
       email
       id
-      # createdAt
-      # updatedAt
       address {
         address
       }
@@ -31,6 +29,7 @@ const getUserQuery = gql`
       accessToken
       address {
         address
+        country
       }
       createdAt
       updatedAt

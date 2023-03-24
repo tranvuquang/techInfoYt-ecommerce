@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import { wrapper } from "../../../../app/store";
 import React, { useEffect, useState } from "react";
-import { ICategory, IUser } from "../../../../features/auth/types";
+import { ICategory } from "../../../../features/auth/types";
 import Layout from "../../../../components/Layout/Layout";
 import AdminMenu from "../../../../components/Layout/AdminMenu";
 import {
@@ -9,14 +9,13 @@ import {
   IProductFilter,
   productFilterDefaultValue,
 } from "../../../../features/product/types";
-import { queryClient } from "../../../../graphql-client/config";
+import { queryClient } from "../../../../graphql-client";
 import { getProductsQuery } from "../../../../graphql-client/product";
 import Link from "next/link";
 import Image from "next/image";
 import { useAdmin } from "../../../../helpers/useAuthen";
 
 type Props = {
-  user: IUser;
   products: IProduct[];
   filter: IProductFilter;
   categories: ICategory[];
@@ -88,7 +87,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
           accessToken,
           dispatch,
           getProductsQuery,
-          { ...filter, category: allCategories }
+          { ...filter, category: allCategories, limit: 10 }
         );
         if (resData) {
           filter = resData.data.getProducts.filter;

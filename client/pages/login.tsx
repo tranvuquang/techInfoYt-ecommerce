@@ -1,12 +1,12 @@
 import axios from "axios";
 import { NextPage } from "next";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { useAppDispatch } from "../app/hooks";
 import { wrapper } from "../app/store";
 import Layout from "../components/Layout/Layout";
 import { setAccessTokenRedux, setUserRedux } from "../features/auth/authSlice";
-import { IUser } from "../features/auth/types";
 import { useAuthen } from "../helpers/useAuthen";
 
 type FormData = {
@@ -18,12 +18,11 @@ const formDataDefaultValue = {
   password: "123456",
 };
 
-type Props = {
-  user: IUser;
-};
+type Props = {};
 
 const Login: NextPage<Props> = (props) => {
   useAuthen();
+  const { back } = useRouter();
   const dispatch = useAppDispatch();
   const [formData, setFormData] = useState<FormData>(formDataDefaultValue);
   const { email, password } = formData;
@@ -38,7 +37,7 @@ const Login: NextPage<Props> = (props) => {
       if (res) {
         dispatch(setAccessTokenRedux(res.data.accessToken));
         dispatch(setUserRedux(res.data.user));
-        toast.success("Login successful");
+        back;
       }
     } catch (error: any) {
       console.log(error.message);

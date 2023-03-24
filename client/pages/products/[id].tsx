@@ -1,16 +1,13 @@
 import type { NextPage } from "next";
 import { wrapper } from "../../app/store";
 import React from "react";
-import { ICategory, IUser } from "../../features/auth/types";
 import Layout from "../../components/Layout/Layout";
-import AdminMenu from "../../components/Layout/AdminMenu";
-import { useAdmin } from "../../helpers/useAuthen";
 import {
   IProduct,
   productDefaultValue,
   productFilterDefaultValue,
 } from "../../features/product/types";
-import { queryClient } from "../../graphql-client/config";
+import { queryClient } from "../../graphql-client";
 import {
   getProductQuery,
   getProductsQuery,
@@ -19,13 +16,11 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 
 type Props = {
-  user: IUser;
   product: IProduct;
-  categories: ICategory[];
   products: IProduct[];
 };
 
-const ProductDetail: NextPage<Props> = ({ product, categories, products }) => {
+const ProductDetail: NextPage<Props> = ({ product, products }) => {
   const { push } = useRouter();
   return (
     <Layout>
@@ -130,7 +125,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
         "02 products/[id].tsx store state on the server: ",
         store.getState().auth.user.email
       );
-      const { page, limit, searchStr, price } = productFilterDefaultValue;
+      const { page, searchStr, price } = productFilterDefaultValue;
 
       if (id) {
         const resData = await queryClient(
@@ -154,7 +149,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
         getProductsQuery,
         {
           page,
-          limit: 7,
+          limit: 20,
           category: allCategories,
           searchStr,
           price,

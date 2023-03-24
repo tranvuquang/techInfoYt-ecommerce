@@ -5,7 +5,7 @@ import {
   setAccessTokenRedux,
   setUserRedux,
 } from "../../features/auth/authSlice";
-import { mutationClient } from "../../graphql-client/config";
+import { mutationClient } from "../../graphql-client";
 import { loginMutation } from "../../graphql-client/auth";
 import { nextYear } from "../../features/auth/types";
 

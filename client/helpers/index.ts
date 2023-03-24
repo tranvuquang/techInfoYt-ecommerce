@@ -1,4 +1,4 @@
-import App, { AppContext } from "next/app";
+import { AppContext } from "next/app";
 import { getCookie } from "cookies-next";
 import jwt_decode from "jwt-decode";
 import { store } from "../app/store";
@@ -10,7 +10,7 @@ import {
 import { setCartFromCookieToRedux } from "../features/product/productSlice";
 import { getUserQuery } from "../graphql-client/auth";
 import { getCategoriesQuery } from "../graphql-client/category";
-import { queryClient } from "../graphql-client/config";
+import { queryClient } from "../graphql-client";
 
 export const getValueFromCookie = (key: string, { ctx }: AppContext) => {
   let result = null;
@@ -71,7 +71,7 @@ export const getInitialPropsApp = async (appContext: AppContext, App: any) => {
     }
 
     // neu co accessToken o cookies reload lai trang va lay them thong tin, save accessToken va user vao redux server side va pageProps
-    if ((!user.name || categories.length === 0) && accessToken) {
+    if ((user.name==="" || categories.length === 0) && accessToken) {
       const userData = await queryClient(accessToken, dispatch, getUserQuery, {
         id,
       });

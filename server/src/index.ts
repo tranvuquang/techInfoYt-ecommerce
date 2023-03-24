@@ -32,7 +32,7 @@ db.sequelize.sync().then(() => {
       app.use(
         "/graphql",
         cors<cors.CorsRequest>({
-          origin: ["http://localhost:3001", "http://localhost:3002"],
+          origin: ["http://localhost:3001", "http://localhost:3002" ],
           credentials: true,
         }),
         express.json(),
