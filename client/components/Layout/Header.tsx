@@ -1,20 +1,69 @@
-import React from "react";
-
-import { useAppSelector } from "../../app/hooks";
-import {
-  selectAuth,
-} from "../../features/auth/authSlice";
+import React, { useEffect, useRef, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { selectAuth } from "../../features/auth/authSlice";
 import { useRouter } from "next/router";
-import { Navbar, Container, Nav, NavDropdown, Form, Button } from "react-bootstrap";
-import { selectProduct } from "../../features/product/productSlice";
+import { Navbar, Container, Nav, NavDropdown, Form } from "react-bootstrap";
+import {
+  selectProduct,
+  setProductFilterRedux,
+  setResetRedux,
+} from "../../features/product/productSlice";
 import { cartTransform } from "../../helpers/cart";
 
 const Header = () => {
+  const { route } = useRouter();
+  const dispatch = useAppDispatch();
   const { user, accessToken } = useAppSelector(selectAuth);
-  const { cart } = useAppSelector(selectProduct);
+  const { cart, productFilter, reset } = useAppSelector(selectProduct);
   const { role, name, id } = user;
+  const [search, setSearch] = useState(productFilter.searchStr);
+  const typingTimeoutRef = useRef(null);
   const { cartLength } = cartTransform(cart);
   const { push } = useRouter();
+
+  useEffect(() => {
+    if (productFilter.searchStr === "") {
+      setSearch("");
+    }
+  }, [productFilter.searchStr]);
+
+  const onSetSearch = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = evt.target;
+    setSearch(value);
+    if (!dispatch) {
+      return;
+    }
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    typingTimeoutRef.current = setTimeout(() => {
+      if (route === "/") {
+        dispatch(
+          setProductFilterRedux({
+            ...productFilter,
+            homeSearch: value.toLowerCase(),
+            searchStr: "",
+          })
+        );
+      } else {
+        dispatch(
+          setProductFilterRedux({
+            ...productFilter,
+            searchStr: value.toLowerCase(),
+            homeSearch: "",
+          })
+        );
+        push("/");
+      }
+    }, 1000) as any;
+  };
+
+  const onFocus = () => {
+    setSearch("");
+    dispatch(setResetRedux(!reset));
+  };
+
   return (
     <Navbar bg="light" expand="sm" fixed="top">
       <Container fluid>
@@ -26,18 +75,21 @@ const Header = () => {
         >
           🛒 Ecommerce App
         </Navbar.Brand>
-        <Form className="d-flex">
-            <Form.Control
-              type="search"
-              placeholder="Search"
-              className="me-2"
-              aria-label="Search"
-            />
-            <Button variant="outline-success">Search</Button>
-          </Form>
+
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto">
+            <Form className="d-flex">
+              <Form.Control
+                type="search"
+                placeholder="Search"
+                className="me-2"
+                aria-label="Search"
+                value={search}
+                onChange={onSetSearch}
+                onFocus={onFocus}
+              />
+            </Form>
             <Nav.Link
               onClick={() => {
                 push("/");
@@ -45,10 +97,6 @@ const Header = () => {
             >
               Home
             </Nav.Link>
-            <NavDropdown title="Categories" id="category">
-              <NavDropdown.Item href="#action/3.1">Category 1</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.1">Category 2</NavDropdown.Item>
-            </NavDropdown>
             {!user || !accessToken ? (
               <Nav.Link onClick={() => push("/login")}>Login</Nav.Link>
             ) : (
