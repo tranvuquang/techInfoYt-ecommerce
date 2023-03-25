@@ -1,7 +1,6 @@
 import type { NextPage } from "next";
 import { wrapper } from "../../../app/store";
 import React from "react";
-import { IUser } from "../../../features/auth/types";
 import Layout from "../../../components/Layout/Layout";
 import AdminMenu from "../../../components/Layout/AdminMenu";
 import { useAdmin } from "../../../helpers/useAuthen";

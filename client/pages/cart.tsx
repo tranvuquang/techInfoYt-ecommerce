@@ -54,29 +54,13 @@ const CartPage: NextPage<Props> = (props) => {
         {
           nonce,
           cart: cart.map((item: any) => {
-            const {
-              id,
-              name,
-              description,
-              price,
-              categoryId,
-              quantity,
-              photo,
-              shipping,
-            } = item;
             return {
-              id,
-              name,
-              description,
-              price,
-              categoryId,
-              quantity,
-              photo,
-              shipping,
+              id:item.id,
+              quantity:item.quantity,
             };
           }),
           total,
-          buyer: user.id,
+          buyerId: user.id,
         }
       )) as any;
       if (resData) {
