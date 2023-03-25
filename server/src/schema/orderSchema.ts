@@ -3,6 +3,7 @@ export const typeOrder = `#graphql
 
   type Payment {
     amount:Int!
+    success:Boolean!
   }
 
   type ProductCart {
@@ -18,29 +19,32 @@ export const typeOrder = `#graphql
 
   input CartInput {
     id:String!
-    name: String!
-    description: String!
-    price:Int!
-    categoryId: String!
+    # name: String!
+    # description: String!
+    # price:Int!
+    # categoryId: String!
     quantity: Int!
-    photo: String!
-    shipping: Boolean! 
+    # photo: String!
+    # shipping: Boolean! 
   }
 
   type Order {
     id:String!
     cart:[ProductCart]!
     payment:Payment!
-    buyer:String!
+    status:String!
+    buyer:User!
     createdAt: Date
     updatedAt: Date
   }
 
   type Query {
     getClientToken:String!
+    getAllOrders:[Order]!
+    getOrdersByBuyerId(id:String):[Order]!
   }
   type Mutation{
-    createPayment(nonce: String!,cart: [CartInput]!, total: Int!, buyer: String!): Order!
+    createPayment(nonce: String!,cart: [CartInput]!, total: Int!, buyerId: String!): Order!
   }
   
 `;

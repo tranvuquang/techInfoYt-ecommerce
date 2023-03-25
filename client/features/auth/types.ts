@@ -17,7 +17,7 @@ export type IUser = {
   email: string;
   name: string;
   phone: string;
-  address: { address: string };
+  address: { address: string; country: string };
   answer: string;
   role: Role;
   accessToken: String;

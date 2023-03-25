@@ -4,7 +4,7 @@ import braintree from "braintree";
 import { checkAuth } from "../middlewares/auth";
 import db from "../models";
 
-const { orders } = db;
+const { orders, users, products } = db;
 
 const gateway = new braintree.BraintreeGateway({
   environment: braintree.Environment.Sandbox,
@@ -14,6 +14,30 @@ const gateway = new braintree.BraintreeGateway({
 });
 
 export const orderResolver = {
+  Order: {
+    buyer: async (parent: any) => {
+      try {
+        const userFounder = await users.findByPk(parent.buyerId);
+        if (!userFounder) {
+          throw new GraphQLError(`User not found!`);
+        }
+        const { dataValues } = userFounder;
+        return {
+          ...dataValues,
+        };
+      } catch (error) {
+        console.log(error.message);
+        throw new GraphQLError(error.message);
+      }
+    },
+    cart: async (parent: any) => {
+      const cartData = parent.cart.map(async (item: any) => {
+        const productFounder = await products.findByPk(item.id);
+        return { ...productFounder.dataValues, quantity: item.quantity };
+      });
+      return cartData;
+    },
+  },
   Query: {
     async getClientToken() {
       try {
@@ -27,14 +51,59 @@ export const orderResolver = {
         throw new GraphQLError(error.message);
       }
     },
+    async getAllOrders(
+      _parent: any,
+      _args: any,
+      { accessToken }: { accessToken: string }
+    ) {
+      try {
+        if (!checkAuth(accessToken)) {
+          throw new GraphQLError(`Token is invalid`);
+        }
+        const ordersFounder = await orders.findAll();
+        if (!ordersFounder) {
+          throw new GraphQLError(`Orders not found`);
+        }
+        return ordersFounder.map((item: any) => {
+          return item.dataValues;
+        });
+      } catch (error) {
+        console.log(error.message);
+        throw new GraphQLError(error.message);
+      }
+    },
+    async getOrdersByBuyerId(
+      _parent: any,
+      { id }: any,
+      { accessToken }: { accessToken: string }
+    ) {
+      try {
+        if (!checkAuth(accessToken)) {
+          throw new GraphQLError(`Token is invalid`);
+        }
+        const ordersFounder = await orders.findAll({
+          where: {
+            buyerId: id,
+          },
+        });
+        if (!ordersFounder) {
+          throw new GraphQLError(`Orders not found`);
+        }
+        return ordersFounder.map((item: any) => {
+          return item.dataValues;
+        });
+      } catch (error) {
+        console.log(error.message);
+        throw new GraphQLError(error.message);
+      }
+    },
   },
   Mutation: {
     async createPayment(
       _parent: any,
-      { cart, nonce, total, buyer }: any,
+      { cart, nonce, total, buyerId }: any,
       { accessToken }: { accessToken: string }
     ) {
-      console.log(nonce)
       try {
         if (!checkAuth(accessToken)) {
           throw new GraphQLError(`Token is invalid`);
@@ -46,18 +115,16 @@ export const orderResolver = {
             submitForSettlement: true,
           },
         });
-
         if (!newTransaction) {
           throw new GraphQLError(`Internal Server Error`);
         }
-        console.log(newTransaction.transaction.amount);
-
         const order = await orders.create({
           cart,
           payment: {
             amount: newTransaction.transaction.amount,
+            success: true,
           },
-          buyer,
+          buyerId,
         });
         if (!order) {
           throw new GraphQLError(`Internal Server Error`);

@@ -7,27 +7,131 @@ const getClientTokenQuery = gql`
 `;
 
 const createPaymentMutation = gql`
-  mutation createPaymentMutation($cart: [CartInput]!, $nonce: String!, $total: Int!, $buyer: String!) {
-  createPayment(cart: $cart, nonce: $nonce, total: $total, buyer: $buyer) {
-    cart {
-      name
+  mutation createPaymentMutation(
+    $nonce: String!
+    $cart: [CartInput]!
+    $total: Int!
+    $buyerId: String!
+  ) {
+    createPayment(
+      nonce: $nonce
+      cart: $cart
+      total: $total
+      buyerId: $buyerId
+    ) {
       id
-      description
-      price
-      categoryId
-      quantity
-      photo
-      shipping
+      payment {
+        amount
+        success
+      }
+      status
+      createdAt
+      updatedAt
+      buyer {
+        id
+        email
+        name
+        phone
+        address {
+          country
+          address
+        }
+        answer
+        role
+      }
+      cart {
+        id
+        name
+        description
+        price
+        categoryId
+        quantity
+        photo
+        shipping
+      }
     }
-    id
-    payment {
-      amount
-    }
-    buyer
-    createdAt
-    updatedAt
   }
-}
 `;
 
-export { getClientTokenQuery, createPaymentMutation };
+const getAllOrdersQuery = gql`
+  query getAllOrdersQuery {
+    getAllOrders {
+      id
+      payment {
+        amount
+        success
+      }
+      status
+      createdAt
+      updatedAt
+      buyer {
+        id
+        email
+        name
+        phone
+        address {
+          country
+          address
+        }
+        answer
+        role
+        accessToken
+      }
+      cart {
+        id
+        name
+        description
+        price
+        categoryId
+        quantity
+        photo
+        shipping
+      }
+    }
+  }
+`;
+
+const getOrdersByBuyerIdQuery = gql`
+  query getOrdersByBuyerIdQuery($id: String) {
+    getOrdersByBuyerId(id: $id) {
+      id
+      payment {
+        amount
+        success
+      }
+      status
+      createdAt
+      updatedAt
+      buyer {
+        id
+        email
+        name
+        phone
+        address {
+          country
+          address
+        }
+        answer
+        role
+        accessToken
+      }
+      cart {
+        id
+        name
+        description
+        price
+        categoryId
+        quantity
+        photo
+        shipping
+      }
+    }
+  }
+`;
+
+export {
+  getClientTokenQuery,
+  createPaymentMutation,
+  getAllOrdersQuery,
+  getOrdersByBuyerIdQuery,
+};

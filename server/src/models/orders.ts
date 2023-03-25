@@ -24,7 +24,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
         return JSON.parse(value);
       },
     },
-    buyer: {
+    buyerId: {
       type: DataTypes.UUID,
       allowNull: false,
     },
